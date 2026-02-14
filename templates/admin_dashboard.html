@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-translate="page_title_admin_dashboard">Admin Dashboard — Bharat Votes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+  <style>
+    :root {
+      --saffron: #FF9933;
+      --white: #FFFFFF;
+      --green: #138808;
+      --navy: #000080;
+      --light-blue: #E6F0FF;
+      --light-green: #E6FFE6;
+      --light-saffron: #FFF0E0;
+      --dark-blue: #1E3A8A;
+    }
+    
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background-color: #f8fafc;
+    }
+    
+    .brand-font {
+      font-family: 'Noto Serif Devanagari', serif;
+    }
+    
+    .header-gradient {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+    }
+    
+    .footer-gradient {
+      background: linear-gradient(135deg, var(--light-saffron) 0%, var(--light-green) 100%);
+      border-top: 2px solid var(--green);
+    }
+    
+    .ashoka-wheel {
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .ashoka-wheel-small {
+      width: 24px;
+      height: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23000'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .header-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .header-btn-login {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .header-btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .header-btn-signup {
+      background-color: white;
+      color: var(--green);
+    }
+    
+    .header-btn-signup:hover {
+      background-color: var(--light-green);
+    }
+    
+    .flash-message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .flash-success {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border-left: 4px solid #10B981;
+    }
+    
+    .flash-danger {
+      background-color: #FEE2E2;
+      color: #B91C1C;
+      border-left: 4px solid #EF4444;
+    }
+    
+    .flash-info {
+      background-color: #DBEAFE;
+      color: #1E40AF;
+      border-left: 4px solid #3B82F6;
+    }
+    
+    .dashboard-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #E5E7EB;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      border: 1px solid #E5E7EB;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark-blue);
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    
+    .data-table th {
+      background-color: #F9FAFB;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #E5E7EB;
+      color: #4B5563;
+    }
+    
+    .data-table tr:hover {
+      background-color: #F9FAFB;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--saffron);
+      box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Additional Button Styles */
+    .btn-outline-success {
+      background-color: transparent;
+      border: 2px solid var(--green);
+      color: var(--green);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .btn-outline-success:hover {
+      background-color: var(--light-green);
+    }
+    
+    .activity-item {
+      padding: 12px 16px;
+      border-left: 4px solid var(--saffron);
+      background: white;
+      margin-bottom: 8px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .activity-vote { border-left-color: var(--green); }
+    .activity-ballot { border-left-color: var(--saffron); }
+    .activity-new { border-left-color: #3B82F6; }
+    .activity-mismatch { border-left-color: #EF4444; }
+    
+    .chart-container {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    /* Tabs Styling */
+    .tab-btn {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6B7280;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .tab-btn.active {
+      color: var(--saffron);
+      border-bottom-color: var(--saffron);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Dropdown Styles for Tailwind compatibility if standard Bootstrap JS isn't loaded */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: #f9f9f9;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {background-color: #f1f1f1}
+    .dropdown:hover .dropdown-content {display: block;}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p>Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4">
+      <a href="{{ url_for('main.logout') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-sign-out-alt mr-2"></i><span data-translate="logout_btn">Logout</span>
+      </a>
+      <select id="language-selector" class="px-2 py-1 border rounded bg-white text-gray-800">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800" data-translate="admin_dashboard_title">Admin Dashboard</h2>
+            <div class="text-sm text-gray-500">
+            <i class="fas fa-shield-alt mr-1"></i> <span data-translate="admin_access_label">Administrator Access</span>
+            </div>
+        </div>
+        
+        <div class="dropdown">
+            <button class="btn-primary">
+                <i class="fas fa-eye mr-2"></i> Switch View <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('main.admin_dashboard') }}"><i class="fas fa-chart-line mr-2"></i> Admin Dashboard</a>
+                <a href="{{ url_for('main.eci_dashboard') }}"><i class="fas fa-user-tie mr-2"></i> ECI Dashboard</a>
+                <a href="{{ url_for('main.booth_dashboard') }}"><i class="fas fa-person-booth mr-2"></i> Booth Operations</a>
+                <hr class="border-gray-200">
+                <a href="{{ url_for('main.results_page') }}" class="text-red-600 font-bold"><i class="fas fa-circle text-xs mr-2"></i> Live Results</a>
+            </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card">
+          <div class="stat-icon bg-blue-100 text-blue-600">
+            <i class="fas fa-vote-yea text-xl"></i>
+          </div>
+          <div class="stat-value" id="live-total-votes">0</div>
+          <div class="stat-label" data-translate="total_votes_label">Total Votes Cast</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon bg-green-100 text-green-600">
+            <i class="fas fa-users text-xl"></i>
+          </div>
+          <div class="stat-value" id="live-candidate-count">0</div>
+          <div class="stat-label" data-translate="candidates_label">Candidates</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon bg-purple-100 text-purple-600">
+            <i class="fas fa-flag text-xl"></i>
+          </div>
+          <div class="stat-value" id="live-party-count">0</div>
+          <div class="stat-label" data-translate="parties_label">Political Parties</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon bg-amber-100 text-amber-600">
+            <i class="fas fa-map-marker-alt text-xl"></i>
+          </div>
+          <div class="stat-value" id="live-const-count">0</div>
+          <div class="stat-label" data-translate="constituencies_label">Constituencies</div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="candidate_tally_title">Candidate Tally</h3>
+          <div class="chart-container">
+            <canvas id="candidateChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="party_tally_title">Party Tally</h3>
+          <div class="chart-container">
+            <canvas id="partyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-card mb-8">
+        <div class="flex border-b border-gray-200 mb-4">
+          <button class="tab-btn active" onclick="openTab(event, 'tab-all')">All Candidates</button>
+          <button class="tab-btn" onclick="openTab(event, 'tab-constituency')">By Constituency</button>
+          <button class="tab-btn" onclick="openTab(event, 'tab-state')">By State</button>
+        </div>
+
+        <div id="tab-all" class="tab-content active">
+          <div class="overflow-x-auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-translate="candidate_col">Candidate</th>
+                  <th data-translate="party_col">Party</th>
+                  <th>State</th>
+                  <th>Constituency</th>
+                  <th data-translate="votes_col">Votes</th>
+                </tr>
+              </thead>
+              <tbody id="table-body-all">
+                <tr><td colspan="5" class="text-center text-gray-500 py-4">Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-constituency" class="tab-content">
+            <div id="container-constituency">
+                <p class="text-gray-500 p-4">Loading constituency data...</p>
+            </div>
+        </div>
+
+        <div id="tab-state" class="tab-content">
+            <div id="container-state">
+                <p class="text-gray-500 p-4">Loading state data...</p>
+            </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        
+        <div class="space-y-8">
+          
+          <div class="dashboard-card border-l-4 border-l-blue-500">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-semibold text-gray-800">Blockchain Health</h3>
+              <i class="fas fa-link text-blue-500 text-2xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4 text-sm">Verify cryptographic integrity of the vote chain.</p>
+            
+            <div id="chain-status" class="mb-4 p-3 bg-gray-50 rounded text-sm text-gray-500">
+              Status: <span class="font-bold">Unknown</span>
+            </div>
+            
+            <button onclick="verifyChain()" class="btn-outline-success w-full">
+              <i class="fas fa-shield-alt mr-2"></i> Verify Integrity
+            </button>
+          </div>
+
+          <div class="dashboard-card">
+            <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="manual_ballot_title">Manual Ballot Activation</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-translate="aadhaar_label">Aadhaar Number</label>
+                <input type="text" id="ajax_aadhaar" placeholder="Aadhaar" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-translate="voter_id_label">Voter ID</label>
+                <input type="text" id="ajax_vid" placeholder="Voter ID" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-translate="booth_number_label">Booth Number</label>
+                <input type="text" id="ajax_booth" placeholder="Booth" value="B1" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1" data-translate="note_label">Note (Optional)</label>
+                <input type="text" id="ajax_note" placeholder="Note" class="form-input" />
+              </div>
+              <button id="ajax_trigger_btn" class="btn-primary w-full">
+                <i class="fas fa-bolt mr-2"></i><span data-translate="activate_ballot_btn">Activate Ballot</span>
+              </button>
+              <div id="ajax_trigger_res" class="p-3 bg-gray-100 rounded-lg text-sm mt-4"></div>
+            </div>
+          </div>
+
+        </div>
+        
+        <div class="dashboard-card h-full">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="live_activity_title">Live Activity Feed</h3>
+          <div id="activityFeed" class="h-96 overflow-y-auto space-y-3">
+            <div class="text-center py-8 text-gray-500">
+              <i class="fas fa-circle-notch fa-spin mr-2"></i> <span data-translate="loading_activities">Loading activities...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">Bharat Votes</p>
+      </div>
+      <p class="text-sm" data-translate="footer_copyright">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2" data-translate="footer_slogan">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+  <script>
+    // --- Global Chart Instances ---
+    let myCandidateChart = null;
+    let myPartyChart = null;
+
+    // --- 1. Init Charts ---
+    document.addEventListener('DOMContentLoaded', function() {
+      // Candidate Chart Init
+      const candidateCtx = document.getElementById('candidateChart').getContext('2d');
+      myCandidateChart = new Chart(candidateCtx, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Votes', data: [], backgroundColor: 'rgba(255, 153, 51, 0.7)', borderColor: 'rgba(255, 153, 51, 1)', borderWidth: 1 }] },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+      });
+      
+      // Party Chart Init
+      const partyCtx = document.getElementById('partyChart').getContext('2d');
+      myPartyChart = new Chart(partyCtx, {
+        type: 'doughnut',
+        data: { labels: [], datasets: [{ data: [], backgroundColor: ['#FF9933', '#138808', '#000080', '#800080', '#ff0000', '#00ff00'], borderWidth: 1 }] },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // Start Polling immediately
+      updateDashboard();
+      setInterval(updateDashboard, 3000);
+    });
+
+    // --- 2. Live Stats Logic ---
+    async function updateDashboard() {
+        try {
+            const response = await fetch('/api/live_stats');
+            const data = await response.json();
+
+            // A. Update Top Stats
+            document.getElementById('live-total-votes').innerText = data.total_votes;
+            document.getElementById('live-candidate-count').innerText = data.candidates.length;
+            document.getElementById('live-party-count').innerText = data.parties.length;
+            
+            // Calculate unique constituencies
+            const constSet = new Set(data.candidates.map(c => c.constituency));
+            document.getElementById('live-const-count').innerText = constSet.size;
+
+            // B. Update Charts
+            // Candidate Chart
+            myCandidateChart.data.labels = data.candidates.map(c => c.name);
+            myCandidateChart.data.datasets[0].data = data.candidates.map(c => c.count);
+            myCandidateChart.update();
+
+            // Party Chart
+            myPartyChart.data.labels = data.parties.map(p => p.party);
+            myPartyChart.data.datasets[0].data = data.parties.map(p => p.count);
+            myPartyChart.update();
+
+            // C. Update Tables
+            renderAllCandidatesTable(data.candidates);
+            renderGroupedTable(data.candidates, 'constituency', 'container-constituency');
+            renderGroupedTable(data.candidates, 'state', 'container-state');
+
+        } catch (e) {
+            console.error("Dashboard poll error:", e);
+        }
+    }
+
+    function renderAllCandidatesTable(candidates) {
+        const tbody = document.getElementById('table-body-all');
+        let html = '';
+        if(candidates.length === 0) {
+            html = '<tr><td colspan="5" class="text-center text-gray-500 py-4">No candidates found.</td></tr>';
+        } else {
+            candidates.forEach(c => {
+                html += `
+                <tr>
+                  <td class="font-medium">${c.name}</td>
+                  <td><span class="bg-gray-100 text-gray-800 py-1 px-2 rounded text-xs">${c.party}</span></td>
+                  <td>${c.state || 'N/A'}</td>
+                  <td>${c.constituency}</td>
+                  <td><span class="text-green-600 font-bold">${c.count}</span></td>
+                </tr>`;
+            });
+        }
+        tbody.innerHTML = html;
+    }
+
+    function renderGroupedTable(candidates, key, containerId) {
+        const container = document.getElementById(containerId);
+        const groups = {};
+        
+        // Group data
+        candidates.forEach(c => {
+            const k = c[key] || "Unknown";
+            if(!groups[k]) groups[k] = [];
+            groups[k].push(c);
+        });
+
+        let html = '';
+        if(Object.keys(groups).length === 0) {
+            html = '<p class="text-gray-500 p-4">No data available.</p>';
+        } else {
+            for (const [groupName, groupCands] of Object.entries(groups)) {
+                html += `
+                <div class="mb-6 border rounded-lg overflow-hidden">
+                  <div class="bg-gray-50 px-4 py-2 font-bold text-gray-700 border-bottom flex justify-between">
+                    <span><i class="fas fa-map-marker-alt mr-2 text-amber-500"></i> ${groupName}</span>
+                    <span class="text-sm text-gray-500">${groupCands.length} Candidates</span>
+                  </div>
+                  <table class="data-table"><tbody>`;
+                
+                groupCands.forEach(c => {
+                    html += `
+                    <tr>
+                      <td class="w-1/3">${c.name}</td>
+                      <td class="w-1/3 text-gray-500">${c.party}</td>
+                      <td class="w-1/3 text-right font-bold">${c.count} Votes</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+            }
+        }
+        container.innerHTML = html;
+    }
+
+    // --- 3. Tab Logic ---
+    function openTab(evt, tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    // --- 4. Blockchain Verify Logic ---
+    async function verifyChain() {
+      const statusDiv = document.getElementById('chain-status');
+      statusDiv.innerHTML = '<span class="text-blue-500"><i class="fas fa-spinner fa-spin"></i> Verifying cryptographic chain...</span>';
+      try {
+        const res = await fetch('/api/verify_chain');
+        const data = await res.json();
+        if (data.is_valid) {
+          statusDiv.innerHTML = `
+            <div class="text-green-700 bg-green-50 p-2 rounded">
+              <div class="font-bold"><i class="fas fa-check-circle"></i> Chain Valid</div>
+              <div class="text-xs mt-1">Checked ${data.chain_length} blocks. No tampering detected.</div>
+              <div class="text-xs text-gray-400 mt-1 truncate">Last Hash: ${data.last_block_hash}</div>
+            </div>`;
+        } else {
+          statusDiv.innerHTML = `
+            <div class="text-red-700 bg-red-50 p-2 rounded">
+              <div class="font-bold"><i class="fas fa-exclamation-triangle"></i> TAMPERING DETECTED</div>
+              <div class="text-xs mt-1">${data.message}</div>
+            </div>`;
+        }
+      } catch (e) {
+        statusDiv.innerHTML = '<span class="text-red-500">Connection Failed</span>';
+      }
+    }
+
+    // --- 5. Manual Override Logic ---
+    document.getElementById('ajax_trigger_btn').addEventListener('click', async ()=>{
+      const aadhaar = document.getElementById('ajax_aadhaar').value.trim();
+      const voter_id = document.getElementById('ajax_vid').value.trim();
+      const booth = document.getElementById('ajax_booth').value.trim() || 'B1';
+      const note = document.getElementById('ajax_note').value.trim();
+      if(!voter_id){ alert('Voter ID is required'); return; }
+      const resultEl = document.getElementById('ajax_trigger_res');
+      resultEl.innerHTML = '<div class="text-blue-600"><i class="fas fa-spinner fa-spin mr-2"></i> <span data-translate="processing_msg">Processing...</span></div>';
+      try {
+        const resp = await fetch('/api/manual_override',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({aadhaar, voter_id, booth_number:booth, note})
+        });
+        const j = await resp.json();
+        if(resp.ok) {
+          resultEl.innerHTML = `<div class="text-green-600"><i class="fas fa-check-circle mr-2"></i> ${j.message || 'Ballot activated successfully'}</div>`;
+        } else {
+          resultEl.innerHTML = `<div class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i> ${j.message || 'Error activating ballot'}</div>`;
+        }
+      } catch(e) {
+        resultEl.innerHTML = `<div class="text-red-600">Request failed</div>`;
+      }
+    });
+
+    // --- 6. Live Feed ---
+    async function pollFeed(){
+      try{
+        const resp = await fetch('/api/activity_feed');
+        const data = await resp.json();
+        const feed = document.getElementById('activityFeed');
+        feed.innerHTML = '';
+        if(data.length === 0) {
+          feed.innerHTML = '<div class="text-center py-8 text-gray-500"><span data-translate="no_recent_activities">No recent activities</span></div>';
+          return;
+        }
+        data.forEach(ev=>{
+          const div = document.createElement('div');
+          div.className = 'activity-item';
+          if(ev.type==='ballot'){
+             div.className += ' activity-ballot';
+             div.innerHTML = `<div class="flex justify-between items-start">
+               <div><i class="fas fa-vote-yea mr-2 text-amber-500"></i> Ballot <b>${ev.status}</b></div>
+               <div class="text-xs text-gray-500">${ev.time}</div>
+             </div>`;
+          } else if(ev.type==='vote'){
+             div.className += ' activity-vote';
+             div.innerHTML = `<div class="flex justify-between items-start">
+               <div><i class="fas fa-check-circle mr-2 text-green-500"></i> Vote Mined!</div>
+               <div class="text-xs text-gray-500">${ev.time}</div>
+             </div>
+             <div class="text-xs text-gray-600 mt-1 font-mono">${ev.desc}</div>`;
+          } else if(ev.type==='new_voter'){
+             div.className += ' activity-new';
+             div.innerHTML = `<div><i class="fas fa-user-plus mr-2 text-blue-500"></i> New Voter Created</div>
+             <div class="text-xs text-gray-500">${ev.time}</div>`;
+          } else {
+             div.className += ' activity-mismatch';
+             div.innerHTML = `<div><i class="fas fa-exclamation-triangle mr-2 text-red-500"></i> Mismatch/Log</div>
+             <div class="text-xs text-gray-500">${ev.time}</div>`;
+          }
+          feed.appendChild(div);
+        });
+      }catch(e){ console.error(e); }
+    }
+    
+    function setLanguage(lang) {
+      if (typeof translations !== 'undefined' && translations[lang]) {
+        const elements = document.querySelectorAll('[data-translate]');
+        elements.forEach(el => {
+          const key = el.getAttribute('data-translate');
+          if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+      }
+    }
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+        languageSelector.addEventListener('change', (e) => setLanguage(e.target.value));
+        setLanguage('en');
+    }
+
+    // Auto-poll for activity feed separately if needed, or rely on updateDashboard
+    setInterval(pollFeed, 3000);
+    pollFeed();
+    // Auto-verify chain on load
+    verifyChain();
+  </script>
+</body>
+</html>

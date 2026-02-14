@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Next Gen Voting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p>Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4 relative">
+      <a href="{{ url_for('main.login') }}" class="header-btn header-btn-login">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login
+      </a>
+      <a href="{{ url_for('main.signup') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-user-plus mr-2"></i>Sign Up
+      </a>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow">
+    <section class="min-h-screen flex items-center justify-center bg-gray-100 py-12">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-3xl font-bold mb-6 text-center gradient-text">🔑 Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2 mb-4">
+          {% for category, message in messages %}
+            <div class="p-3 rounded text-white {% if category=='success' %}bg-green-500{% elif category=='danger' %}bg-red-500{% else %}bg-blue-500{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('main.login') }}" class="space-y-4">
+      <div>
+        <label for="role" class="block text-gray-700 font-medium mb-1">Login as:</label>
+        <select id="role" name="role" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="voter">Voter</option>
+          <option value="admin">Admin</option>
+          <option value="booth">Booth Officer</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="username" class="block text-gray-700 font-medium mb-1">Username / Voter ID</label>
+        <input type="text" id="username" name="username" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+      </div>
+
+      <div>
+        <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+        <input type="password" id="password" name="password"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+        <p class="text-sm text-gray-500 mt-1">* For voters, password is optional (just enter Voter ID).</p>
+      </div>
+
+      <button type="submit" class="btn primary-btn w-full">Login</button>
+    </form>
+
+    <p class="text-center text-gray-600 mt-6">
+      New voter? <a href="{{ url_for('main.signup') }}" class="text-indigo-600 font-medium hover:underline">Sign up here</a>
+    </p>
+  </div>
+</section>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">Bharat Votes</p>
+      </div>
+      <p class="text-sm">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+</body>
+</html>

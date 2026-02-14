@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-translate="page_title_booth_dashboard">Booth Dashboard — Bharat Votes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+  <style>
+    :root {
+      --saffron: #FF9933;
+      --white: #FFFFFF;
+      --green: #138808;
+      --navy: #000080;
+      --light-blue: #E6F0FF;
+      --light-green: #E6FFE6;
+      --light-saffron: #FFF0E0;
+      --dark-blue: #1E3A8A;
+    }
+    
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background-color: #f8fafc;
+    }
+    
+    .brand-font {
+      font-family: 'Noto Serif Devanagari', serif;
+    }
+    
+    .header-gradient {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+    }
+    
+    .footer-gradient {
+      background: linear-gradient(135deg, var(--light-saffron) 0%, var(--light-green) 100%);
+      border-top: 2px solid var(--green);
+    }
+    
+    .ashoka-wheel {
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .ashoka-wheel-small {
+      width: 24px;
+      height: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23000'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .header-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .header-btn-login {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .header-btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .header-btn-signup {
+      background-color: white;
+      color: var(--green);
+    }
+    
+    .header-btn-signup:hover {
+      background-color: var(--light-green);
+    }
+    
+    .flash-message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .flash-success {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border-left: 4px solid #10B981;
+    }
+    
+    .flash-danger {
+      background-color: #FEE2E2;
+      color: #B91C1C;
+      border-left: 4px solid #EF4444;
+    }
+    
+    .flash-info {
+      background-color: #DBEAFE;
+      color: #1E40AF;
+      border-left: 4px solid #3B82F6;
+    }
+    
+    .dashboard-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #E5E7EB;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--saffron);
+      box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.2);
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-secondary {
+      background: #F3F4F6;
+      color: #374151;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-secondary:hover {
+      background: #E5E7EB;
+    }
+    
+    .activity-item {
+      padding: 12px 16px;
+      border-left: 4px solid var(--saffron);
+      background: white;
+      margin-bottom: 8px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .activity-vote {
+      border-left-color: var(--green);
+    }
+    
+    .activity-ballot {
+      border-left-color: var(--saffron);
+    }
+    
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid #E5E7EB;
+      margin-bottom: 24px;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      font-weight: 500;
+      color: #6B7280;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      color: var(--saffron);
+      border-bottom-color: var(--saffron);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .manual-override-form {
+      background: #F9FAFB;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #E5E7EB;
+    }
+    
+    .manual-override-form .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-box {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E5E7EB;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark-blue);
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #6B7280;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p>Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4">
+      <a href="{{ url_for('main.logout') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-sign-out-alt mr-2"></i><span data-translate="logout_btn">Logout</span>
+      </a>
+      <select id="language-selector" class="px-2 py-1 border rounded bg-white text-gray-800">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+        <option value="gu">ગુજરાતી</option>
+        <option value="ta">தமிழ்</option>
+        <option value="te">తెలుగు</option>
+        <option value="ur">اردو</option>
+      </select>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800" data-translate="booth_dashboard_title">Booth Dashboard</h2>
+          <p class="text-gray-600" data-translate="booth_number_label">Booth Number: {{ session.get('booth_number','B1') }}</p>
+        </div>
+        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+          <i class="fas fa-user-shield mr-2"></i><span data-translate="booth_officer_access">Booth Officer Access</span>
+        </div>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value">24</div>
+          <div class="stat-label" data-translate="voters_today_label">Voters Today</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">18</div>
+          <div class="stat-label" data-translate="votes_cast_label">Votes Cast</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">2</div>
+          <div class="stat-label" data-translate="pending_verification_label">Pending Verification</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">4</div>
+          <div class="stat-label" data-translate="in_queue_label">In Queue</div>
+        </div>
+      </div>
+      
+      <div class="tab-container">
+        <div class="tab active" data-tab="manual" data-translate="manual_override_tab">Manual Override</div>
+        <div class="tab" data-tab="activity" data-translate="live_activity_tab">Live Activity</div>
+        <div class="tab" data-tab="tools" data-translate="booth_tools_tab">Booth Tools</div>
+      </div>
+      
+      <div class="tab-content active" id="manual-tab">
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="manual_override_form_title">Manual Override (Form)</h3>
+          
+          <div class="manual-override-form">
+            <form method="post" action="/manual_override">
+              <div class="form-group">
+                <label class="form-label" data-translate="aadhaar_label">Aadhaar Number</label>
+                <input type="text" name="aadhaar" class="form-input" required placeholder="Enter Aadhaar number">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" data-translate="voter_id_label">Voter ID</label>
+                <input type="text" name="voter_id" class="form-input" required placeholder="Enter Voter ID">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" data-translate="booth_number_label">Booth Number</label>
+                <input type="text" name="booth_number" class="form-input" value="{{ session.get('booth_number','B1') }}" placeholder="Booth number">
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" data-translate="note_label">Note (Optional)</label>
+                <input type="text" name="note" class="form-input" placeholder="Reason for manual override">
+              </div>
+              
+              <button type="submit" class="btn-primary w-full">
+                <i class="fas fa-bolt mr-2"></i><span data-translate="manual_activate_btn">Manual Activate Ballot & Log Mismatch</span>
+              </button>
+            </form>
+          </div>
+        </div>
+        
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="manual_trigger_title">Manual Trigger (AJAX)</h3>
+          <p class="text-gray-600 mb-4" data-translate="manual_trigger_desc">Enter Aadhaar + VoterID to activate ballot remotely:</p>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="form-label" data-translate="aadhaar_label">Aadhaar Number</label>
+              <input type="text" id="ajax_aadhaar" class="form-input" placeholder="Aadhaar">
+            </div>
+            
+            <div>
+              <label class="form-label" data-translate="voter_id_label">Voter ID</label>
+              <input type="text" id="ajax_vid" class="form-input" placeholder="Voter ID">
+            </div>
+            
+            <div>
+              <label class="form-label" data-translate="booth_number_label">Booth Number</label>
+              <input type="text" id="ajax_booth" class="form-input" placeholder="Booth" value="{{ session.get('booth_number','B1') }}">
+            </div>
+            
+            <div>
+              <label class="form-label" data-translate="note_label">Note (Optional)</label>
+              <input type="text" id="ajax_note" class="form-input" placeholder="Note">
+            </div>
+            
+            <button id="ajax_trigger_btn" class="btn-primary w-full">
+              <i class="fas fa-bolt mr-2"></i><span data-translate="activate_ballot_btn">Activate Ballot</span>
+            </button>
+            
+            <div id="ajax_trigger_res" class="p-4 bg-gray-100 rounded-lg mt-4 text-sm"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="activity-tab">
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="live_activity_feed_title">Live Activity Feed</h3>
+          <div id="activityFeed" class="h-96 overflow-y-auto space-y-3">
+            <div class="text-center py-8 text-gray-500">
+              <i class="fas fa-circle-notch fa-spin mr-2"></i> <span data-translate="loading_activities">Loading activities...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="tools-tab">
+        <div class="dashboard-card">
+          <h3 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b" data-translate="booth_mgmt_tools_title">Booth Management Tools</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                  <i class="fas fa-print text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800" data-translate="print_reports_title">Print Reports</h4>
+                  <p class="text-gray-600 text-sm" data-translate="print_reports_desc">Generate and print daily voting reports for this booth</p>
+                </div>
+              </div>
+              <button class="btn-secondary w-full">
+                <i class="fas fa-download mr-2"></i><span data-translate="generate_report_btn">Generate Report</span>
+              </button>
+            </div>
+            
+            <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+              <div class="flex items-center mb-4">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                  <i class="fas fa-users text-green-600 text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800" data-translate="voter_lookup_title">Voter Lookup</h4>
+                  <p class="text-gray-600 text-sm" data-translate="voter_lookup_desc">Search for voter information in the database</p>
+                </div>
+              </div>
+              <button class="btn-secondary w-full">
+                <i class="fas fa-search mr-2"></i><span data-translate="search_voters_btn">Search Voters</span>
+              </button>
+            </div>
+            
+            <div class="bg-amber-50 p-6 rounded-lg border border-amber-200">
+              <div class="flex items-center mb-4">
+                <div class="bg-amber-100 p-3 rounded-full mr-4">
+                  <i class="fas fa-cog text-amber-600 text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800" data-translate="booth_settings_title">Booth Settings</h4>
+                  <p class="text-gray-600 text-sm" data-translate="booth_settings_desc">Configure booth settings and preferences</p>
+                </div>
+              </div>
+              <button class="btn-secondary w-full">
+                <i class="fas fa-sliders-h mr-2"></i><span data-translate="configure_btn">Configure</span>
+              </button>
+            </div>
+            
+            <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
+              <div class="flex items-center mb-4">
+                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                  <i class="fas fa-question-circle text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-800" data-translate="help_support_title">Help & Support</h4>
+                  <p class="text-gray-600 text-sm" data-translate="help_support_desc">Access help resources and contact support</p>
+                </div>
+              </div>
+              <button class="btn-secondary w-full">
+                <i class="fas fa-life-ring mr-2"></i><span data-translate="get_help_btn">Get Help</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">Bharat Votes</p>
+      </div>
+      <p class="text-sm" data-translate="footer_copyright">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2" data-translate="footer_slogan">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tab functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+      });
+    });
+    
+    // AJAX manual trigger
+    document.getElementById('ajax_trigger_btn').addEventListener('click', async ()=>{
+      const aadhaar = document.getElementById('ajax_aadhaar').value.trim();
+      const voter_id = document.getElementById('ajax_vid').value.trim();
+      const booth = document.getElementById('ajax_booth').value.trim() || 'B1';
+      const note = document.getElementById('ajax_note').value.trim();
+      
+      if(!aadhaar || !voter_id){ 
+        alert('Please enter both Aadhaar and Voter ID'); 
+        return; 
+      }
+      
+      const resultEl = document.getElementById('ajax_trigger_res');
+      resultEl.innerHTML = '<div class="text-blue-600"><i class="fas fa-spinner fa-spin mr-2"></i> <span data-translate="processing_msg">Processing...</span></div>';
+      
+      try {
+        const resp = await fetch('/api/manual_override',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({aadhaar,voter_id,booth_number:booth,note})
+        });
+        const j = await resp.json();
+        
+        if(resp.ok) {
+          resultEl.innerHTML = `<div class="text-green-600"><i class="fas fa-check-circle mr-2"></i> ${translations[languageSelector.value]['ballot_activated_success'] || j.message}</div>`;
+        } else {
+          resultEl.innerHTML = `<div class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i> ${translations[languageSelector.value]['error_activating_ballot'] || j.message}</div>`;
+        }
+      } catch (error) {
+        resultEl.innerHTML = `<div class="text-red-600"><i class="fas fa-exclamation-circle mr-2"></i> ${translations[languageSelector.value]['request_failed']}: ${error}</div>`;
+      }
+    });
+
+    // Activity feed polling
+    async function pollFeed(){
+      try{
+        const resp = await fetch('/api/activity_feed');
+        const data = await resp.json();
+        const feed = document.getElementById('activityFeed');
+        const booth = "{{ session.get('booth_number','B1') }}";
+        const lang = languageSelector.value;
+        
+        feed.innerHTML = '';
+        
+        if(data.length === 0) {
+          feed.innerHTML = `<div class="text-center py-8 text-gray-500">${translations[lang]['no_recent_activities']}</div>`;
+          return;
+        }
+        
+        // Filter for this booth only
+        const boothActivities = data.filter(ev => ev.booth === booth);
+        
+        if(boothActivities.length === 0) {
+          feed.innerHTML = `<div class="text-center py-8 text-gray-500">${translations[lang]['no_activities_for_booth']}</div>`;
+          return;
+        }
+        
+        boothActivities.forEach(ev => {
+          const div = document.createElement('div');
+          div.className = 'activity-item';
+          
+          if(ev.type === 'ballot'){
+            div.className += ' activity-ballot';
+            const statusText = ev.status === 'activated' ? translations[lang]['status_activated'] : translations[lang]['status_deactivated'];
+            div.innerHTML = `
+              <div class="flex justify-between items-start">
+                <div><i class="fas fa-vote-yea mr-2 text-amber-500"></i> ${translations[lang]['ballot_status']} <b>${statusText}</b> ${translations[lang]['for_voter']} <b>${ev.voter_id}</b></div>
+                <div class="text-xs text-gray-500">${ev.time}</div>
+              </div>
+            `;
+          } else if(ev.type === 'vote'){
+            div.className += ' activity-vote';
+            div.innerHTML = `
+              <div class="flex justify-between items-start">
+                <div><i class="fas fa-check-circle mr-2 text-green-500"></i> ${translations[lang]['vote_cast_by']} <b>${ev.voter_id}</b> ${translations[lang]['for_candidate']} <b>${ev.candidate_id}</b></div>
+                <div class="text-xs text-gray-500">${ev.time}</div>
+              </div>
+              <div class="text-xs text-gray-600 mt-1">${translations[lang]['receipt_label']}: ${ev.receipt}</div>
+            `;
+          }
+          feed.appendChild(div);
+        });
+      } catch(e) { 
+        console.error("Activity feed error", e);
+        const lang = languageSelector.value;
+        document.getElementById('activityFeed').innerHTML = `<div class="text-red-500">${translations[lang]['error_loading_feed']}</div>`;
+      }
+    }
+
+    // Universal translation function
+    function setLanguage(lang) {
+      const pageTitleEl = document.querySelector('title');
+      if (pageTitleEl && translations[lang] && translations[lang]['page_title_booth_dashboard']) {
+          pageTitleEl.textContent = translations[lang]['page_title_booth_dashboard'];
+      }
+      
+      const elements = document.querySelectorAll('[data-translate]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      // Re-run pollFeed to update dynamic content after language change
+      pollFeed();
+    }
+
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+        languageSelector.addEventListener('change', (event) => {
+            setLanguage(event.target.value);
+        });
+        setLanguage('en');
+    }
+    
+    // Poll activity feed every 3 seconds
+    setInterval(pollFeed, 3000);
+    pollFeed();
+
+    // Back button log out warning
+    window.onbeforeunload = function() {
+        return "Going back will log you out. Do you want to proceed?";
+    };
+  </script>
+</body>
+</html>

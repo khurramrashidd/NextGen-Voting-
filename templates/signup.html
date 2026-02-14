@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup — Next Gen Voting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+  <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+  <style>
+    /* Custom Styles specific to camera UI */
+    #camera-container { display: none; position: relative; width: 100%; border-radius: 0.5rem; overflow: hidden; background: #000; }
+    #video { width: 100%; height: auto; transform: scaleX(-1); } /* Mirror effect */
+    #canvas { display: none; }
+    #preview-container { display: none; text-align: center; margin-top: 10px; }
+    #photo-preview { max-width: 100%; border-radius: 8px; border: 2px solid #4F46E5; display: block; margin: 0 auto; }
+    .option-btn { flex: 1; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-weight: 500; transition: all 0.2s; }
+    .option-btn:hover { background-color: #F3F4F6; }
+    .option-btn.active { background-color: #EEF2FF; border-color: #6366F1; color: #4F46E5; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p>Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4 relative">
+      <a href="{{ url_for('main.login') }}" class="header-btn header-btn-login">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login
+      </a>
+      <a href="{{ url_for('main.signup') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-user-plus mr-2"></i>Sign Up
+      </a>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow">
+    <section class="min-h-screen flex items-center justify-center bg-gray-100 py-12">
+      <div class="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-3xl font-bold gradient-text" data-translate="title">📝 Voter Signup</h2>
+          <div class="language-switcher">
+            <select id="language-selector" class="px-2 py-1 border rounded">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="mr">मराठी</option>
+            </select>
+          </div>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.signup') }}" enctype="multipart/form-data" class="space-y-4" id="signupForm">
+          <div>
+            <label for="name" class="block text-gray-700 font-medium mb-1" data-translate="name_label">Full Name</label>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="name" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <button type="button" class="mic-btn p-2 rounded-full bg-gray-200" data-field="name">
+                <i class="fas fa-microphone"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="dob" class="block text-gray-700 font-medium mb-1" data-translate="dob_label">Date of Birth</label>
+            <div class="flex items-center space-x-2">
+              <input type="date" id="dob" name="dob" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <button type="button" class="mic-btn p-2 rounded-full bg-gray-200" data-field="dob">
+                <i class="fas fa-microphone"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="aadhaar" class="block text-gray-700 font-medium mb-1" data-translate="aadhaar_label">Aadhaar Number</label>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="aadhaar" name="aadhaar" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <button type="button" class="mic-btn p-2 rounded-full bg-gray-200" data-field="aadhaar">
+                <i class="fas fa-microphone"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="voter_id" class="block text-gray-700 font-medium mb-1" data-translate="voter_id_label">Voter ID</label>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="voter_id" name="voter_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <button type="button" class="mic-btn p-2 rounded-full bg-gray-200" data-field="voter_id">
+                <i class="fas fa-microphone"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="border-t pt-4">
+            <label class="block text-gray-700 font-medium mb-3" data-translate="face_label">Face Photo (Required)</label>
+            
+            <div class="flex space-x-4 mb-4" id="photo-options">
+              <button type="button" class="option-btn" onclick="showUpload()">
+                <i class="fas fa-upload mr-2"></i> Upload File
+              </button>
+              <button type="button" class="option-btn" onclick="startCamera()">
+                <i class="fas fa-camera mr-2"></i> Take Picture
+              </button>
+            </div>
+
+            <div id="upload-container" class="hidden">
+              <input type="file" id="face" name="face" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm" onchange="handleFileSelect(this)" />
+            </div>
+
+            <div id="camera-container">
+              <video id="video" autoplay playsinline></video>
+              <canvas id="canvas"></canvas>
+              <button type="button" id="capture-btn" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-3 shadow-lg" onclick="capturePhoto()">
+                <div class="w-12 h-12 bg-red-600 rounded-full border-4 border-white"></div>
+              </button>
+            </div>
+
+            <div id="preview-container">
+              <p class="text-sm text-green-600 font-bold mb-2"><i class="fas fa-check-circle"></i> Photo Captured</p>
+              <img id="photo-preview" src="#" alt="Preview" />
+              <button type="button" class="mt-3 text-red-600 text-sm font-medium hover:underline" onclick="retakePhoto()">
+                <i class="fas fa-redo"></i> Retake / Change
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn primary-btn w-full" data-translate="submit_btn">Register as Voter</button>
+        </form>
+
+        <p class="text-center text-gray-600 mt-6">
+          <span data-translate="login_link">Already registered? <a href="{{ url_for('main.login') }}" class="text-indigo-600 font-medium hover:underline">Login here</a></span>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">Bharat Votes</p>
+      </div>
+      <p class="text-sm">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+  <script>
+    // --- Camera & Upload Logic ---
+    let videoStream = null;
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const faceInput = document.getElementById('face');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImg = document.getElementById('photo-preview');
+    const cameraContainer = document.getElementById('camera-container');
+    const uploadContainer = document.getElementById('upload-container');
+    const photoOptions = document.getElementById('photo-options');
+
+    function showUpload() {
+      // Stop camera if running
+      stopCamera();
+      cameraContainer.style.display = 'none';
+      uploadContainer.classList.remove('hidden');
+      // Reset input
+      faceInput.value = '';
+    }
+
+    async function startCamera() {
+      uploadContainer.classList.add('hidden');
+      previewContainer.style.display = 'none';
+      cameraContainer.style.display = 'block';
+      
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        video.srcObject = videoStream;
+      } catch (err) {
+        alert("Camera access denied or not available.");
+        showUpload();
+      }
+    }
+
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+    }
+
+    function capturePhoto() {
+      // Set canvas dimensions equal to video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      // Draw image
+      const context = canvas.getContext('2d');
+      // Mirror if using user-facing camera context (optional, but CSS mirrors video)
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1);
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert to blob and assign to input
+      canvas.toBlob((blob) => {
+        const file = new File([blob], "webcam_capture.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        faceInput.files = dataTransfer.files;
+
+        // Show preview
+        const url = URL.createObjectURL(blob);
+        previewImg.src = url;
+        
+        // UI updates
+        stopCamera();
+        cameraContainer.style.display = 'none';
+        previewContainer.style.display = 'block';
+      }, 'image/jpeg', 0.95);
+    }
+
+    function handleFileSelect(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          uploadContainer.classList.add('hidden'); // Hide input to look cleaner
+          previewContainer.style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function retakePhoto() {
+      // Clear file input
+      faceInput.value = '';
+      previewContainer.style.display = 'none';
+      // Show options again
+      photoOptions.style.display = 'flex';
+      // Default to showing upload or nothing, let user choose
+      showUpload(); 
+    }
+
+    // --- Speech Logic (Existing) ---
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const synth = window.speechSynthesis;
+    const formFields = [
+      {id: 'name', prompt_key: 'name_label'},
+      {id: 'dob', prompt_key: 'dob_label'},
+      {id: 'aadhaar', prompt_key: 'aadhaar_label'},
+      {id: 'voter_id', prompt_key: 'voter_id_label'}
+    ];
+
+    function setLanguage(lang) {
+      if (typeof translations !== 'undefined' && translations[lang]) {
+        const elements = document.querySelectorAll('[data-translate]');
+        elements.forEach(el => {
+          const key = el.getAttribute('data-translate');
+          if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+      }
+    }
+
+    document.getElementById('language-selector').addEventListener('change', (event) => {
+      setLanguage(event.target.value);
+    });
+    setLanguage('en');
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      synth.speak(utterance);
+    }
+
+    function startListening(fieldId) {
+      const lang = document.getElementById('language-selector').value;
+      const fieldData = formFields.find(f => f.id === fieldId);
+      
+      // Special logic for face button not needed as we have custom buttons now
+      if (!fieldData) return;
+
+      speak(`Please say your ${fieldData.id}`);
+      recognition.lang = lang === 'en' ? 'en-US' : lang + '-IN';
+      
+      recognition.onresult = (event) => {
+        const val = event.results[0][0].transcript;
+        document.getElementById(fieldId).value = val;
+      };
+      recognition.start();
+    }
+
+    document.querySelectorAll('.mic-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const fieldId = event.currentTarget.getAttribute('data-field');
+        startListening(fieldId);
+      });
+    });
+  </script>
+</body>
+</html>

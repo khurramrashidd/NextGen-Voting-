@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Nomination Application</h2>
+
+  <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+
+    <!-- Aadhaar + Fetch -->
+    <div class="mb-3">
+      <label for="aadhaar" class="form-label">Aadhaar Number</label>
+      <div class="input-group">
+        <input list="aadhaar-list" type="text" id="aadhaar" name="aadhaar" placeholder="Aadhaar" class="form-control" required>
+        <button type="button" id="fetchBtn" class="btn btn-info">Fetch from DigiLocker</button>
+      </div>
+      <datalist id="aadhaar-list">
+        <!-- Pre-seeded dummy Aadhaar numbers -->
+        <option value="123456789012">Ramesh Kumar</option>
+        <option value="987654321098">Sushila Devi</option>
+        <option value="456789123456">Mohammad Ali</option>
+      </datalist>
+      <small class="form-text text-muted">
+        Select Aadhaar from the list or type manually, then click "Fetch".
+      </small>
+    </div>
+
+    <!-- Candidate details -->
+    <div class="mb-3">
+      <label>Name</label>
+      <input type="text" id="name" name="name" placeholder="Name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Date of Birth</label>
+      <input type="date" id="dob" name="dob" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Address</label>
+      <input type="text" id="address" name="address" placeholder="Address" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Party / Independent</label>
+      <input type="text" id="party" name="party" placeholder="Party/Independent" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Constituency</label>
+      <input type="text" id="constituency" name="constituency" placeholder="Constituency" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Email</label>
+      <input type="email" id="email" name="email" placeholder="Email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Phone</label>
+      <input type="text" id="phone" name="phone" placeholder="Phone" class="form-control" required>
+    </div>
+
+    <!-- File uploads -->
+    <div class="mb-3">
+      <label>Affidavit (PDF)</label>
+      <input type="file" name="affidavit" accept=".pdf" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Property Certificate (PDF)</label>
+      <input type="file" name="property_cert" accept=".pdf" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Education Certificate (PDF)</label>
+      <input type="file" name="education_cert" accept=".pdf" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Criminal Record Declaration (PDF)</label>
+      <input type="file" name="criminal_record" accept=".pdf" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100 mt-3">Submit Nomination</button>
+  </form>
+</div>
+
+<!-- JS for DigiLocker Autofill -->
+<script>
+document.getElementById('fetchBtn').addEventListener('click', function() {
+  const aadhaar = document.getElementById('aadhaar').value.trim();
+  if (!aadhaar) {
+    alert("Please enter Aadhaar number first");
+    return;
+  }
+  fetch(`/api/digilocker/${aadhaar}`)
+    .then(res => {
+      if (!res.ok) throw new Error("No record found for this Aadhaar");
+      return res.json();
+    })
+    .then(data => {
+      if (data.found) {
+        document.getElementById('name').value = data.name;
+        document.getElementById('dob').value = data.dob;
+        document.getElementById('address').value = data.address;
+        document.getElementById('party').value = data.party;
+        document.getElementById('constituency').value = data.constituency;
+        document.getElementById('email').value = data.email;
+        document.getElementById('phone').value = data.phone;
+      } else {
+        alert("No DigiLocker record found");
+      }
+    })
+    .catch(err => alert(err.message));
+});
+</script>
+{% endblock %}

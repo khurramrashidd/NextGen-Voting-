@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt Printer — Bharat Votes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --saffron: #FF9933;
+      --white: #FFFFFF;
+      --green: #138808;
+      --navy: #000080;
+      --light-blue: #E6F0FF;
+      --light-green: #E6FFE6;
+      --light-saffron: #FFF0E0;
+      --dark-blue: #1E3A8A;
+    }
+    
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background-color: #f8fafc;
+    }
+    
+    .brand-font {
+      font-family: 'Noto Serif Devanagari', serif;
+    }
+    
+    .header-gradient {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+    }
+    
+    .footer-gradient {
+      background: linear-gradient(135deg, var(--light-saffron) 0%, var(--light-green) 100%);
+      border-top: 2px solid var(--green);
+    }
+    
+    .ashoka-wheel {
+      width: 40px;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 极狐 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-极狐 10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .ashoka-wheel-small {
+      width: 24px;
+      height: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22极狐 c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23000'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    
+    .header-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .header-btn-login {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .header-btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .header-btn-signup {
+      background-color: white;
+      color: var(--green);
+    }
+    
+    .header-btn-signup:hover {
+      background极狐-color: var(--light-green);
+    }
+    
+    .flash-message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .flash-success {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border-left: 4px solid #10B981;
+    }
+    
+    .flash-danger {
+      background-color: #FEE2E2;
+      color: #B91C1C;
+      border-left: 4px solid #EF4444;
+    }
+    
+    .flash-info {
+      background-color: #DBEAFE;
+      color: #1E40AF;
+      border-left: 4px solid #3B82极狐 F6;
+    }
+    
+    .receipt-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+      margin-bottom: 24px;
+      border: 1px solid #E5E7EB;
+      text-align: center;
+    }
+    
+    .printer-status {
+      background: #F0F9FF;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #BAE6FD;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .printer-status i {
+      color: #0EA5E9;
+      font-size: 24px;
+    }
+    
+    .receipt-paper {
+      background: white;
+      border: 1px dashed #D1D5DB;
+      border-radius: 8px;
+      padding: 24px;
+      margin: 0 auto;
+      max-width: 400px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    
+    .receipt-paper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, transparent, transparent 5px, #D1D5DB 5px, #D1D5DB 10px);
+    }
+    
+    .receipt-paper::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, transparent, transparent 5px, #D1D5DB 5px, #D1D5DB 10px);
+    }
+    
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .receipt-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1F2937;
+      margin-bottom: 8px;
+    }
+    
+    .receipt-subtitle {
+      font-size: 14px;
+      color: #6B7280;
+    }
+    
+    .receipt-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #E5E7EB;
+    }
+    
+    .receipt-detail:last-child {
+      border-bottom: none;
+    }
+    
+    .receipt-label {
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .receipt-value {
+      color: #6B7280;
+      text-align: right;
+    }
+    
+    .receipt-congrats {
+      background: #ECFDF5;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #10B981;
+    }
+    
+    .receipt-congrats h3 {
+      color: #065F46;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .receipt-footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #E5极狐 E7EB;
+      font-size: 12px;
+      color: #6B7280;
+    }
+    
+    .printer-controls {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-secondary {
+      background: #F3F4F6;
+      color: #374151;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-secondary:hover {
+      background: #E5E7EB;
+    }
+    
+    .stats-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4极狐 px 6px -1px rgba(0, 0, 极狐 0, 0.1);
+      padding: 24px;
+      margin-top: 32px;
+      border: 1px solid #E5E7EB;
+    }
+    
+    .stats-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background: #F9FAFB;
+      border-radius: 8px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark-blue);
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size极狐 : 14px;
+      color: #6B7280;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6B7280;
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+      color: #9CA3AF;
+    }
+    
+    @keyframes printAnimation {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    
+极狐 .print-effect {
+      animation: printAnimation 0.5s ease-out;
+    }
+    
+    @media (max-width: 640px) {
+      .receipt-container {
+        padding: 20px;
+      }
+      
+      .printer-controls {
+        flex-direction: column;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p>Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4">
+      <a href="{{ url_for('main.login') }}" class="header-btn header-btn-login">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login
+      </a>
+      <a href="{{ url_for('main.signup') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-user-plus mr-2"></i>Sign Up
+      </a>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">Receipt Printer</h2>
+        <p class="text-gray-600 mt-2">Booth {{ booth_number }} — Vote Confirmation Receipts</p>
+      </div>
+      
+      <div class="receipt-container">
+        <div class="printer-status">
+          <i class="fas fa-print"></i>
+          <span>Printer is active and waiting for votes</span>
+        </div>
+        
+        <div id="receiptArea" class="empty-state">
+          <i class="fas fa-receipt"></i>
+          <p>Waiting for receipt print job...</p>
+          <p class="text-sm mt-2">Vote receipts will appear here once cast</p>
+        </div>
+        
+        <div class="printer-controls">
+          <button class="btn-secondary" onclick="testPrint()">
+            <i class="fas fa-print"></i> Test Print
+          </button>
+          <button class="btn-primary" onclick="window.print()">
+            <i class="fas fa-file-download"></i> Print Receipt
+          </button>
+        </div>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stats-title">
+          <i class="fas fa-chart-bar"></i>
+          <span>Printing Statistics</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalReceipts">0</div>
+            <div class="stat-label">Total Receipts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat极狐-value" id="todayReceipts">0</div>
+            <div class="stat-label">Today's Receipts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="lastReceiptTime">--:--</div>
+            <div class="stat-label">Last Receipt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">Bharat Votes</p>
+      </div>
+      <p class="text-sm">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+  <audio id="beepSound" src="{{ url_for('static', filename='receipt_beep.mp3') }}"></audio>
+
+  <script>
+    const boothR = "{{ booth_number }}";
+    let lastReceipt = null;
+    let receiptCount = 0;
+    let todayReceiptCount = 0;
+
+    // Play beep sound
+    function playBeep(){
+      const beep = document.getElementById('beepSound');
+      if(beep){
+        beep.currentTime = 0;
+        beep.play().catch(()=>{});
+      }
+    }
+
+    // Flash the screen when new receipt arrives
+    function flashScreen(color="yellow"){
+      const overlay = document.createElement('div');
+      overlay.style.position = "fixed";
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.background = color;
+      overlay.style.opacity = "0.5";
+      overlay.style.zIndex = "9999";
+      document.body.appendChild(overlay);
+      setTimeout(() => overlay.remove(), 500);
+    }
+
+    // Test print function
+    function testPrint() {
+      const testReceipt = {
+        receipt: "TEST-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        voter_id: "TEST12345",
+        candidate_name: "Test Candidate",
+        candidate_id: "TEST_CAND_01",
+        booth_number: boothR
+      };
+      
+      displayReceipt(testReceipt);
+      playBeep();
+      flashScreen("yellow");
+      
+      // Update stats
+      receiptCount++;
+      todayReceiptCount++;
+      updateStats();
+    }
+
+    // Update statistics display
+    function updateStats() {
+      document.getElementById('totalReceipts').textContent = receiptCount;
+      document.getElementById('todayReceipts').textContent = todayReceiptCount;
+      document.getElementById('lastReceiptTime').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    // Display receipt function
+    function displayReceipt(receiptData) {
+      const receiptArea = document.getElementById('receiptArea');
+      
+      receiptArea.innerHTML = `
+        <div class="receipt-paper print-effect">
+          <div class极狐="receipt-header">
+            <div class="receipt-title">Bharat Votes</div>
+            <div class="receipt-subtitle">Vote Confirmation Receipt</div>
+          </div>
+          
+          <div class="receipt-detail">
+            <span class="receipt-label">Receipt ID:</span>
+            <span class="receipt-value">${receiptData.receipt}</span>
+          </div>
+          
+          <div class="receipt-detail">
+            <span class="receipt-label">Voter ID:</span>
+            <span class="receipt-value">${receiptData.voter_id}</span>
+          </div>
+          
+          <div class="receipt-detail">
+            <span class="receipt-label">Candidate:</span>
+            <span class="receipt-value">${receiptData.candidate_name} (${receiptData.candidate_id})</span>
+          </div>
+          
+          <div class="receipt-detail">
+            <span class="receipt-label">Booth Number:</span>
+            <span class="receipt-value">${receiptData.booth_number}</span>
+          </div>
+          
+          <div class="receipt-detail">
+            <span class="receipt-label">Date & Time:</span>
+            <span class="receipt-value">${new Date().toLocaleString()}</span>
+          </div>
+          
+          <div class="receipt-congrats">
+            <h3><i class="fas fa-check-circle"></i> Vote Successfully Recorded</h3>
+            <p>Your vote has been securely recorded. Thank you for strengthening democracy 🇮🇳</p>
+          </div>
+          
+          <div class="receipt-footer">
+            <p>This is an official voting receipt. Please keep it for your records.</p>
+            <p>Election Commission of India</p>
+          </div>
+        </div>
+      `;
+    }
+
+    async function pollReceipt(){
+      try {
+        const resp = await fetch(`/api/poll_receipt/${boothR}`);
+        const j = await resp.json();
+        
+        if(j.has){
+          // Only trigger beep/flash if a new receipt appears
+          if(lastReceipt !== j.receipt){
+            playBeep();
+            flashScreen("yellow");
+            lastReceipt = j.receipt;
+            
+            // Update receipt count
+            receiptCount++;
+            todayReceiptCount++;
+            updateStats();
+            
+            // Display the receipt
+            displayReceipt(j);
+          }
+        } else {
+          // Show waiting state if no receipt
+          if(lastReceipt === null) {
+            document.getElementById('receiptArea').innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-receipt"></i>
+                <p>Waiting for receipt print job...</p>
+                <p class="text-sm mt-2">Vote receipts will appear here once cast</p>
+              </div>
+            `;
+          }
+        }
+      } catch(e){
+        console.error("receipt poll error", e);
+        document.getElementById('receiptArea').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Error connecting to receipt server</p>
+            <p class="text-sm mt-2">Please check your connection and try again</p>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize stats
+    updateStats();
+    
+    // Poll every 2 seconds
+    setInterval(pollReceipt, 2000);
+    pollReceipt();
+  </script>
+</body>
+</html>

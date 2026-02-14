@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-translate="page_title_index">VoteChain - Next Gen Voting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+  <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 relative">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center">
+        <div class="ashoka-wheel mr-3"></div>
+        <h1 class="text-3xl font-bold text-white brand-font drop-shadow-md">Bharat Votes</h1>
+      </div>
+      <div class="hidden md:block text-white text-sm">
+        <p data-translate="header_slogan">Empowering Democracy Through Technology</p>
+      </div>
+    </div>
+    <nav class="flex items-center space-x-4 header-buttons">
+      <a href="{{ url_for('main.login') }}" class="header-btn header-btn-login">
+        <i class="fas fa-sign-in-alt mr-2"></i><span data-translate="login_link_header">Login</span>
+      </a>
+      <a href="{{ url_for('main.signup') }}" class="header-btn header-btn-signup">
+        <i class="fas fa-user-plus mr-2"></i><span data-translate="signup_link_header">Sign Up</span>
+      </a>
+      <select id="language-selector" class="px-2 py-1 border rounded bg-white text-gray-800">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+        <option value="gu">ગુજરાતી</option>
+        <option value="ta">தமிழ்</option>
+        <option value="te">తెలుగు</option>
+        <option value="ur">اردو</option>
+      </select>
+    </nav>
+  </header>
+
+  <div class="container mx-auto mt-4 px-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <i class="fas {% if category=='success' %}fa-check-circle{% elif category=='danger' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main id="main-content" class="flex-grow">
+    <div class="min-h-screen bg-gray-50">
+      <section class="relative gradient-bg text-white pt-20 pb-32 overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+          <div class="absolute -top-64 -right-64 w-96 h-96 bg-white opacity-10 rounded-full"></div>
+          <div class="absolute -bottom-48 -left-64 w-96 h-96 bg-green-300 opacity-10 rounded-full"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0 hero-content">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight" data-translate="hero_title_1">Your Voice, <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-green-300" data-translate="hero_title_2">Securely Voted</span>.</h2>
+            <p class="text-xl mb-8 opacity-90" data-translate="hero_subtitle">Bharat Votes brings the ballot box to your fingertips, ensuring a transparent, accessible, and secure election process for everyone.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <a href="/signup" class="btn-white cta-button"><span data-translate="get_started_btn">Get Started</span></a>
+              <a href="#features" class="btn-outline-white cta-button"><span data-translate="learn_more_btn">Learn More</span></a>
+            </div>
+          </div>
+          <div class="md:w-1/2 flex justify-center relative">
+            <div class="relative floating">
+              <div class="hero-image-container">
+                <img src="https://www.eci.gov.in/newimg/one-voter-sure.png" alt="Nothing like voting, I vote for sure" class="w-full max-w-sm sm:max-w-md">
+              </div>
+              <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-saffron rounded-lg shadow-xl z-10 flex items-center justify-center">
+                <i class="fa-solid fa-shield-check text-white text-4xl"></i>
+              </div>
+              <div class="absolute -top-6 -right-6 w-20 h-20 bg-green rounded-full shadow-xl z-10 flex items-center justify-center">
+                <i class="fa-solid fa-check text-white text-3xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="custom-shape-divider-bottom">
+          <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+          </svg>
+        </div>
+      </section>
+
+      <section id="features" class="section bg-white py-16">
+        <div class="container mx-auto px-4 md:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text" data-translate="features_title">NextGen Voting System (Prototype)</h2>
+            <p class="text-gray-600 text-lg" data-translate="features_subtitle">Access the future of democratic participation with our secure voting platform</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 features-grid">
+            <div class="card-hover flex flex-col items-center text-center p-6 rounded-xl shadow-md bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 hover:border-blue-300">
+              <div class="flex-shrink-0 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <i class="fa-solid fa-sign-in-alt text-white text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold text-gray-800 mb-2" data-translate="login_portal_title">Login Portal</h4>
+              <p class="text-gray-700 text-sm" data-translate="login_portal_desc">Access your account as voter, admin or booth officer</p>
+              <a href="/login" class="text-blue-600 hover:text-blue-800 text-sm mt-4 font-semibold flex items-center"><span data-translate="login_now_link">Login Now</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+            </div>
+            
+            <div class="card-hover flex flex-col items-center text-center p-6 rounded-xl shadow-md bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 hover:border-green-300">
+              <div class="flex-shrink-0 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <i class="fa-solid fa-user-plus text-white text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold text-gray-800 mb-2" data-translate="voter_reg_title">Voter Registration</h4>
+              <p class="text-gray-700 text-sm" data-translate="voter_reg_desc">Create your account to participate in elections</p>
+              <a href="/signup" class="text-green-600 hover:text-green-800 text-sm mt-4 font-semibold flex items-center"><span data-translate="signup_link_btn">Sign Up</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+            </div>
+            
+            <div class="card-hover flex flex-col items-center text-center p-6 rounded-xl shadow-md bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 hover:border-purple-300">
+              <div class="flex-shrink-0 w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <i class="fa-solid fa-vote-yea text-white text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold text-gray-800 mb-2" data-translate="ballot_title">Ballot Machine</h4>
+              <p class="text-gray-700 text-sm" data-translate="ballot_desc">View and experience the digital voting interface</p>
+              <a href="/ballot_machine_viewer/B1" class="text-purple-600 hover:text-purple-800 text-sm mt-4 font-semibold flex items-center"><span data-translate="view_booth_link">View Booth</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+            </div>
+            
+            <div class="card-hover flex flex-col items-center text-center p-6 rounded-xl shadow-md bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 hover:border-amber-300">
+              <div class="flex-shrink-0 w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <i class="fa-solid fa-camera text-white text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold text-gray-800 mb-2" data-translate="face_verif_title">Face Verification</h4>
+              <p class="text-gray-700 text-sm" data-translate="face_verif_desc">Secure authentication using facial recognition</p>
+              <a href="/voter_face_scan" class="text-amber-600 hover:text-amber-800 text-sm mt-4 font-semibold flex items-center"><span data-translate="try_now_link">Try Now</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+            </div>
+
+            <div class="card-hover flex flex-col items-center text-center p-6 rounded-xl shadow-md bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100 hover:border-pink-300">
+              <div class="flex-shrink-0 w-16 h-16 bg-pink-500 rounded-full flex items-center justify-center mb-4 shadow-md">
+                <i class="fa-solid fa-print text-white text-2xl"></i>
+              </div>
+              <h4 class="text-xl font-semibold text-gray-800 mb-2" data-translate="receipt_printer_title">Receipt Printer</h4>
+              <p class="text-gray-700 text-sm" data-translate="receipt_printer_desc">Print your vote confirmation receipt</p>
+              <a href="/receipt_viewer/B1" class="text-pink-600 hover:text-pink-800 text-sm mt-4 font-semibold flex items-center"><span data-translate="view_receipts_link">View Receipts</span> <i class="fa-solid fa-arrow-right ml-1 text-xs"></i></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section bg-gray-50 py-16">
+        <div class="container mx-auto px-4 md:px-8">
+          <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3" data-translate="about_eci_title"><i class="fa-solid fa-building-columns text-indigo-500"></i> About Election Commission of India</h3>
+            <p class="text-gray-700 leading-relaxed mb-4" data-translate="about_eci_p1">The Election Commission of India is an autonomous constitutional authority responsible for administering Union and State election processes in India. Our mission is to ensure free, fair, and transparent elections for a strong democracy.</p>
+            <p class="text-gray-700 leading-relaxed mb-4" data-translate="about_eci_p2">Established under the Constitution of India, the ECI is a permanent and independent body that supervises the largest democratic exercise in the world.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              <div class="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100">
+                <div class="text-3xl font-bold text-blue-600 mb-2" data-translate="voters_count">900M+</div>
+                <div class="text-sm text-gray-700" data-translate="voters_label">Registered Voters</div>
+              </div>
+              <div class="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100">
+                <div class="text-3xl font-bold text-green-600 mb-2" data-translate="stations_count">1M+</div>
+                <div class="text-sm text-gray-700" data-translate="stations_label">Polling Stations</div>
+              </div>
+              <div class="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100">
+                <div class="text-3xl font-bold text-amber-600 mb-2" data-translate="years_count">75+</div>
+                <div class="text-sm text-gray-700" data-translate="years_label">Years of Service</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section bg-white py-16">
+        <div class="container mx-auto px-4 md:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text" data-translate="our_commit_title">Our Commitment to Democracy</h2>
+            <p class="text-gray-600 text-lg" data-translate="our_commit_subtitle">We are dedicated to enhancing electoral processes through innovation and technology</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card-hover bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl shadow-md border border-blue-100 flex flex-col items-center text-center">
+              <div class="w-24 h-24 bg-blue-500 rounded-full mb-6 shadow-lg flex items-center justify-center">
+                <i class="fa-solid fa-bullseye text-white text-3xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-800 mb-4" data-translate="our_mission_title">Our Mission</h3>
+              <p class="text-gray-700 leading-relaxed" data-translate="our_mission_desc">
+                To conduct free and fair elections, ensuring maximum participation of voters and building trust in the electoral process. We aim to be a leader in electoral management, promoting democratic values.
+              </p>
+            </div>
+            
+            <div class="card-hover bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-2xl shadow-md border border-green-100">
+              <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center justify-center gap-2" data-translate="key_obj_title"><i class="fa-solid fa-star text-green-500"></i> Key Objectives</h3>
+              <ul class="list-none space-y-4 text-gray-700">
+                <li class="flex items-center"><div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full mr-3 flex items-center justify-center"><i class="fa-solid fa-check text-white text-sm"></i></div> <span data-translate="key_obj_1">Ensure every eligible citizen has the right to vote</span></li>
+                <li class="flex items-center"><div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full mr-3 flex items-center justify-center"><i class="fa-solid fa-check text-white text-sm"></i></div> <span data-translate="key_obj_2">Enhance transparency and integrity of elections</span></li>
+                <li class="flex items-center"><div class="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full mr-3 flex items-center justify-center"><i class="fa-solid fa-check text-white text-sm"></i></div> <span data-translate="key_obj_3">Leverage technology for accessible and secure voting</span></li>
+                <li class="flex items-center"><div class="flex-shrink-0 w-8 h-8 bg-amber-500 rounded-full mr-3 flex items-center justify-center"><i class="fa-solid fa-check text-white text-sm"></i></div> <span data-translate="key_obj_4">Educate voters about electoral processes</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section bg-gray-50 py-16">
+        <div class="container mx-auto px-4 md:px-8">
+          <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center" data-translate="contact_title"><i class="fa-solid fa-phone text-indigo-500 mr-3"></i> Contact Us</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+              <div class="flex flex-col items-center md:items-start">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <i class="fa-solid fa-phone text-blue-600 text-2xl"></i>
+                </div>
+                <h4 class="text-xl font-semibold mb-2 text-gray-800" data-translate="contact_num_title">Contact Number</h4>
+                <p class="text-gray-700" data-translate="contact_num_value">1950 (Toll-free Number)</p>
+              </div>
+              <div class="flex flex-col items-center md:items-start">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <i class="fa-solid fa-location-dot text-green-600 text-2xl"></i>
+                </div>
+                <h4 class="text-xl font-semibold mb-2 text-gray-800" data-translate="postal_addr_title">Postal Address</h4>
+                <p class="text-gray-700" data-translate="postal_addr_value">Election Commission Of India, Nirvachan Sadan, Ashoka Road, New Delhi 110001</p>
+              </div>
+              <div class="flex flex-col items-center md:items-start">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                  <i class="fa-solid fa-envelope text-amber-600 text-2xl"></i>
+                </div>
+                <h4 class="text-xl font-semibold mb-2 text-gray-800" data-translate="email_title">Email</h4>
+                <p class="text-gray-700" data-translate="email_value">complaints@eci.gov.in</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer-gradient text-gray-800 py-6 mt-8 text-center">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-center items-center mb-4">
+        <div class="ashoka-wheel-small mr-2"></div>
+        <p class="font-bold">VoteChain</p>
+      </div>
+      <p class="text-sm" data-translate="footer_copyright">&copy; 2026 Next Gen Voting. All rights reserved.</p>
+      <p class="text-xs mt-2" data-translate="footer_slogan">Empowering Indian Democracy Through Secure Digital Voting</p>
+    </div>
+  </footer>
+
+  <script>
+    function setLanguage(lang) {
+      // Translate the page title
+      const pageTitleEl = document.querySelector('title');
+      if (pageTitleEl && translations[lang] && translations[lang]['page_title_index']) {
+          pageTitleEl.textContent = translations[lang]['page_title_index'];
+      }
+
+      const elements = document.querySelectorAll('[data-translate]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+        languageSelector.addEventListener('change', (event) => {
+            setLanguage(event.target.value);
+        });
+        setLanguage('en');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ballot Machine — Bharat Votes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Serif+Devanagari:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --saffron: #FF9933;
+      --white: #FFFFFF;
+      --green: #138808;
+      --navy: #000080;
+    }
+    
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+    
+    .brand-font { font-family: 'Noto Serif Devanagari', serif; }
+    .header-gradient { background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%); }
+    
+    .ashoka-wheel {
+      width: 40px; height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.514 0-10-4.486-10-10S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm4.5-12.5c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm-9 0c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5.672-1.5 1.5-1.5 1.5.672 1.5 1.5zm9.5 4.5h-9c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5h9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+      background-size: contain;
+    }
+
+    .ballot-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    
+    .voter-info-panel {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+      color: white;
+      padding: 24px;
+    }
+    
+    .timer {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1E3A8A;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+    
+    .candidate-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: 1px solid #E5E7EB;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .candidate-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border-color: var(--saffron);
+    }
+    
+    .candidate-header {
+      padding: 15px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .party-symbol {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+    
+    .candidate-body { padding: 15px; flex-grow: 1; }
+    .c-name { font-weight: 700; font-size: 16px; color: #111; }
+    .c-party { font-size: 13px; color: #666; font-weight: 600; margin-bottom: 4px; }
+    .c-const { font-size: 12px; color: #888; margin-bottom: 8px; }
+    .c-desc { 
+      font-size: 12px; color: #444; background: #fff8f0; 
+      padding: 6px; border-radius: 4px; margin-bottom: 10px; font-style: italic;
+    }
+
+    .action-row {
+      padding: 10px 15px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-social {
+      background: #3B82F6; color: white; border: none; border-radius: 6px;
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+
+    .btn-vote {
+      flex-grow: 1;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+      color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
+    }
+    .btn-vote:hover { opacity: 0.9; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); z-index: 1000; display: none;
+      align-items: center; justify-content: center;
+    }
+    
+    .modal-content {
+      background: white; width: 90%; max-width: 500px;
+      border-radius: 12px; overflow: hidden; animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  </style>
+</head>
+<body class="flex flex-col">
+
+  <header class="header-gradient shadow-lg p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-4">
+      <div class="ashoka-wheel"></div>
+      <h1 class="text-2xl font-bold text-white brand-font">Bharat Votes</h1>
+    </div>
+    <div class="text-white text-sm hidden md:block">Secure Digital Ballot System</div>
+  </header>
+
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <div class="ballot-container">
+      
+      <div class="voter-info-panel flex flex-col md:flex-row justify-between items-center">
+        <div>
+          <h2 class="text-2xl font-bold">Booth {{ booth_number }}</h2>
+          <div id="welcomeMsg" class="text-white text-opacity-90 mt-1">Waiting for voter verification...</div>
+        </div>
+        <div class="text-center mt-4 md:mt-0">
+          <div class="text-xs text-white uppercase tracking-wider mb-1">Session Timer</div>
+          <div id="timer" class="timer">--:--</div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border-b border-gray-200 p-4">
+        <h3 class="text-lg font-bold text-gray-700"><i class="fas fa-th-large mr-2"></i>Official Ballot Paper</h3>
+      </div>
+
+      <div id="candidateList" class="candidate-grid">
+        <div class="col-span-full text-center py-10 text-gray-400">
+          <i class="fas fa-lock fa-3x mb-3"></i>
+          <p>Ballot Locked. Waiting for Face Verification.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-400 py-6 text-center text-sm">
+    &copy; 2026 Next Gen Voting. Authorized for Election Commission use only.
+  </footer>
+
+  <div id="socialModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="bg-gray-900 text-white p-4 flex justify-between items-center">
+        <span class="font-bold"><i class="fab fa-twitter mr-2"></i>Candidate Profile</span>
+        <button onclick="closeModal()" class="text-white hover:text-gray-300"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="p-6 text-center">
+        <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl text-gray-500">
+          <i class="fas fa-user"></i>
+        </div>
+        <h3 id="modalName" class="text-xl font-bold text-gray-800">Candidate</h3>
+        <p id="modalParty" class="text-blue-600 font-medium mb-4">Party</p>
+        <p id="modalDetails" class="text-gray-600 bg-gray-100 p-3 rounded text-sm mb-4">...</p>
+        <button onclick="closeModal()" class="bg-gray-800 text-white px-6 py-2 rounded-full text-sm hover:bg-gray-700">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="beepSound" src="{{ url_for('static', filename='receipt_beep.mp3') }}"></audio>
+
+  <script>
+    const booth = "{{ booth_number }}";
+    let activeVoterId = null;
+    let timerInterval = null;
+
+    function playBeep(){
+      const b = document.getElementById('beepSound');
+      if(b) { b.currentTime = 0; b.play().catch(()=>{}); }
+    }
+
+    function openSocial(name, party, details) {
+      document.getElementById('modalName').innerText = name;
+      document.getElementById('modalParty').innerText = party;
+      document.getElementById('modalDetails').innerText = details;
+      document.getElementById('socialModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('socialModal').style.display = 'none'; }
+
+    function startTimer(minutes=10){
+      let deadline = Date.now() + minutes * 60 * 1000;
+      if(timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(()=>{
+        const diff = deadline - Date.now();
+        if(diff <= 0){
+          document.getElementById('timer').innerText = "Expired";
+          clearInterval(timerInterval);
+          activeVoterId = null; 
+          renderCandidates([]); 
+          return;
+        }
+        const mins = Math.floor(diff / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        document.getElementById('timer').innerText = `${mins}:${String(secs).padStart(2,'0')}`;
+      }, 1000);
+    }
+
+    function renderCandidates(candidates){
+      const container = document.getElementById('candidateList');
+      container.innerHTML = '';
+      
+      if(!candidates || candidates.length === 0){
+        container.innerHTML = `
+          <div class="col-span-full text-center py-10 text-gray-400">
+            <i class="fas fa-lock fa-3x mb-3"></i>
+            <p>Ballot Locked. Waiting for Face Verification.</p>
+          </div>`;
+        return;
+      }
+
+      candidates.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'candidate-card';
+        card.innerHTML = `
+          <div class="candidate-header">
+            <img src="${c.logo_url}" class="party-symbol" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${c.party.charAt(0)}&background=random&color=fff'">
+            <div>
+              <div class="c-name">${c.name}</div>
+              <div class="c-party">${c.party}</div>
+            </div>
+          </div>
+          <div class="candidate-body">
+            <div class="c-const"><i class="fas fa-map-marker-alt mr-1"></i> ${c.constituency}</div>
+            <div class="c-desc">"${c.details || 'Official Candidate'}"</div>
+          </div>
+          <div class="action-row">
+            <button class="btn-social" onclick="openSocial('${c.name}', '${c.party}', '${c.details}')">
+              <i class="fab fa-twitter"></i>
+            </button>
+            <button class="btn-vote" onclick="castVote('${c.candidate_id}', '${c.name}')">
+              VOTE <i class="fas fa-check-circle ml-1"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function pollBallot(){
+      try {
+        const resp = await fetch(`/api/poll_ballot/${booth}`);
+        const data = await resp.json();
+
+        if(data.active){
+          if(activeVoterId !== data.voter_id){
+            activeVoterId = data.voter_id;
+            document.getElementById('welcomeMsg').innerHTML = `✅ Active Session: <b>${data.voter_name}</b>`;
+            renderCandidates(data.candidates);
+            startTimer(10);
+            playBeep();
+          }
+        } else {
+          if(activeVoterId !== null) {
+             activeVoterId = null;
+             document.getElementById('welcomeMsg').innerText = "Waiting for voter verification...";
+             document.getElementById('timer').innerText = "--:--";
+             renderCandidates([]);
+          }
+        }
+      } catch(e) { console.error(e); }
+    }
+
+    async function castVote(cid, cname){
+      if(!confirm(`Confirm vote for ${cname}?`)) return;
+      try {
+        const resp = await fetch('/api/cast_vote', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({voter_id: activeVoterId, candidate_id: cid, booth_number: booth})
+        });
+        const j = await resp.json();
+        if(resp.ok && j.status === 'ok') {
+          alert("Vote Cast Successfully! Collect receipt.");
+          activeVoterId = null; 
+          renderCandidates([]); 
+        } else {
+          alert("Error: " + j.message);
+        }
+      } catch(e) { alert("Network Error"); }
+    }
+
+    setInterval(pollBallot, 1500);
+    pollBallot();
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Candidate Dashboard</h2>
+
+  <p><strong>Aadhaar:</strong> {{ cand.aadhaar }}</p>
+
+  {% if nomination %}
+    <div class="card p-4 shadow-sm border-0">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Your Nomination</h4>
+        
+        {% if nomination.status == "Pending" %}
+          <span class="badge bg-warning text-dark fs-6">Submitted to ECI - Pending Review</span>
+        {% elif nomination.status == "Approved" %}
+          <span class="badge bg-success fs-6">Approved</span>
+        {% elif nomination.status == "Rejected" %}
+          <span class="badge bg-danger fs-6">Rejected</span>
+        {% endif %}
+      </div>
+
+      {% if nomination.status == "Rejected" %}
+      <div class="alert alert-danger">
+        <strong><i class="fas fa-exclamation-circle me-2"></i>Nomination Rejected</strong><br>
+        Reason: {{ nomination.rejection_reason }}
+      </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Name:</strong> {{ nomination.name }}</p>
+          <p><strong>Party:</strong> {{ nomination.party }}</p>
+          <p><strong>Constituency:</strong> {{ nomination.constituency }}</p>
+          <p><strong>Email:</strong> {{ nomination.email }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>DOB:</strong> {{ nomination.dob }}</p>
+          <p><strong>Address:</strong> {{ nomination.address }}</p>
+          <p><strong>Phone:</strong> {{ nomination.phone }}</p>
+        </div>
+      </div>
+
+      <h5 class="mt-4">Uploaded Documents</h5>
+      <ul class="list-unstyled">
+        <li><i class="fas fa-file-pdf text-danger me-2"></i><a href="/uploads/{{ nomination.affidavit }}" target="_blank">Affidavit</a></li>
+        <li><i class="fas fa-file-pdf text-danger me-2"></i><a href="/uploads/{{ nomination.property_cert }}" target="_blank">Property Certificate</a></li>
+        <li><i class="fas fa-file-pdf text-danger me-2"></i><a href="/uploads/{{ nomination.education_cert }}" target="_blank">Education Certificate</a></li>
+        <li><i class="fas fa-file-pdf text-danger me-2"></i><a href="/uploads/{{ nomination.criminal_record }}" target="_blank">Criminal Record Declaration</a></li>
+      </ul>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      You have not applied for a nomination yet.
+    </div>
+    <a href="{{ url_for('main.candidates') }}" class="btn btn-primary">Apply for Nomination</a>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{{ url_for('main.candidate_logout') }}" class="btn btn-danger">Logout</a>
+  </div>
+</div>
+{% endblock %}

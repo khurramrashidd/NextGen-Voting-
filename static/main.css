@@ -1,0 +1,10 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+nav { margin-bottom: 10px; }
+.container { max-width: 900px; margin: auto; }
+.flashes li { list-style: none; padding: 6px; margin: 4px 0; }
+.flashes li.success { background: #d4edda; }
+.flashes li.danger { background: #f8d7da; }
+.flashes li.warning { background: #fff3cd; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #ccc; padding: 6px; }
+video { background: #000; }

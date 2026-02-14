@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 400px;">
+  <h2 class="text-center mb-4">Candidate Signup</h2>
+  <form method="POST" class="card p-4 shadow-sm">
+    <div class="mb-3">
+      <label for="aadhaar" class="form-label">Aadhaar</label>
+      <input type="text" id="aadhaar" name="aadhaar" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+  </form>
+  <p class="text-center mt-3">Already registered? 
+    <a href="{{ url_for('main.candidate_login') }}">Login</a>
+  </p>
+</div>
+{% endblock %}
